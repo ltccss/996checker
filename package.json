@@ -1,10 +1,10 @@
 {
   "name": "check_996",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "",
   "main": "checker.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "996checker": "node checker"
   },
   "keywords": [
     "996"
@@ -13,5 +13,11 @@
   "license": "ISC",
   "devDependencies": {
     "open": "^7.0.0"
+  },
+  "dependencies": {
+    "open": "^7.0.0"
+  },
+  "bin": {
+    "996checker": "checker.js"
   }
 }
