@@ -1,0 +1,337 @@
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Test</title>
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css" />
+
+        <!-- If you use the default popups, use this. -->
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css" />
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css" />
+
+        <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+        <script src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.js"></script>
+        <script src="https://uicdn.toast.com/tui.dom/v3.0.0/tui-dom.js"></script>
+        <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
+        <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+
+        <script src="./git_data.js"></script>
+        <script src="./config.js"></script>
+    </head>
+    <body>
+        <div id="menu">
+            <span id="menu-navi">
+                <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
+                <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
+                    上个月
+                </button>
+                <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
+                    下个月
+                </button>
+                <li id="date">dad</li>
+            </span>
+            <span id="renderRange" class="render-range"></span>
+        </div>
+
+                  
+        <div id="calendar" style="height: 800px;"></div>
+
+
+        <script>
+            // https://nhn.github.io/tui.calendar/latest/Calendar#getDate
+            var Calendar = tui.Calendar;
+
+            prepareHolidayConfig();
+
+            var cal = new tui.Calendar('#calendar', {
+                defaultView: 'month',
+            });
+
+            cal.on('afterRenderSchedule', function(event) {
+                // var schedule = event.schedule;
+                // var element = calendar.getElement(schedule.id, schedule.calendarId);
+                // // use the element
+                // console.log(element);
+                // refreshDate();
+                // console.log(cal.getDate().toDate());
+            });
+
+            refreshDate();
+
+            var actions = {};
+
+            function refreshDate()
+            {
+                let dt1 = cal.getDateRangeStart().toDate();
+                let dt = new Date(dt1.getTime() + 10 * 24 * 3600 * 1000);
+                $('li#date')[0].innerHTML = dt.getFullYear() + "-" + (dt.getMonth() + 1) ;
+                // console.log(dt, dt.getMonth());
+            }
+
+           // Delegate click events on the body to those DOM nodes which have a data-action attribute
+            $('body').on('click', '[data-action]', function() {
+                var action = $(this).data('action');
+                if (action in actions) {
+                    actions[action].apply(this, arguments);
+                }
+            });
+
+            actions["move-prev"] = function()
+            {
+                cal.prev();
+                refreshDate();
+            }
+
+            actions["move-next"] = function()
+            {
+                cal.next();
+                refreshDate();
+            }
+
+            actions["move-today"] = function()
+            {
+                cal.today();
+                refreshDate();
+            }
+
+            if (window._gitData)
+            {
+                console.log("find git commit data");
+
+                let schedules = [];
+
+                let gitData = window._gitData;
+
+                for (let i = 0; i < gitData.length; i++)
+                {
+                    let dt = new Date(gitData[i][0]);
+
+                    let info = checkCommitInfo(dt);
+                    
+                    // todo : 节假日排除
+                    if (info.isOverWork)
+                    {
+                        let year = info.year;
+                        let month =  info.month.toString();
+                        if (month.length < 2)
+                        {
+                            month = "0" + month;
+                        }
+                        let date = info.date.toString();
+                        if (date.length < 2)
+                        {
+                            date = "0" + date;
+                        }
+                        let dateString = year + '-' + month + '-' + date; // 归属时间，过夜时间将归属到前一天
+                        let timeString = dt.getHours() + ":" + dt.getMinutes();
+                        schedules.push({
+                            id: (i+1).toString(),
+                            calendarId: '1',
+                            title: gitData[i][1] + " " + timeString,
+                            body:gitData[i][0],
+                            category: 'allday',
+                            dueDateClass: '',
+                            // schedule类型为allday的时候，只解析start前十个字符？
+                            // 并且日期格式必须为yyyy-mm-dd，mm和dd必须为两位数
+                            start: dateString,
+                            end: dateString,
+                            bgColor : info.color,
+
+                            gravity : info.gravity,
+                            year : info.year,
+                            month : info.month,
+                            date : info.date,
+                            author : gitData[i][1],
+                        });
+
+                        // console.log(dateString);
+                    }
+                }
+
+                schedules.sort(function(a,b){
+                    let s1 = a.year * 10000000 + a.month * 100 + a.date;
+                    let s2 = b.year * 10000000 + b.month * 100 + b.date;
+                    if (s1 != s2)
+                    {
+                        // 不同日的，早的时间在前
+                        return s1 - s2;
+                    }
+
+                    // 同日的，时间晚的在前面
+                    return b.gravity - a.gravity;
+                })
+
+                
+                cal.createSchedules(schedules);
+            }
+
+            // cal.createSchedules([
+            //     {
+            //         id: '1',
+            //         calendarId: '1',
+            //         title: 'my schedule',
+            //         body:'aaaaa',
+            //         category: 'allday',
+            //         dueDateClass: '',
+            //         start: '2019-11-18',
+            //         end: '2019-11-18',
+            //         bgColor : '#ffeeee'
+            //     },
+            //     {
+            //         id: '2',
+            //         calendarId: '1',
+            //         title: 'second schedule',
+            //         category: 'allday',
+            //         dueDateClass: '',
+            //         start: "2019-11-18",
+            //         end: "2019-11-18",
+            //         isReadOnly: true    // schedule is read-only
+            //     }
+            // ]);
+
+            function prepareHolidayConfig()
+            {
+                let holidayConfig = window._holidayConfig;
+
+                for (let key in holidayConfig.extraHoliday)
+                {
+                    let yearConfig = holidayConfig.extraHoliday[key];
+                    for (let key2 in yearConfig)
+                    {
+                        let monthConfig = yearConfig[key2];
+                        if (monthConfig)
+                        {
+                            let obj = {};
+                            for (let i = 0; i< monthConfig.length; i++)
+                            {
+                                obj[monthConfig[i]] = true;
+                            }
+                            yearConfig[key2] = obj;
+                        }
+
+                        
+                    }
+                }
+
+                for (let key in holidayConfig.extraWorkingDay)
+                {
+                    let yearConfig = holidayConfig.extraWorkingDay[key];
+                    for (let key2 in yearConfig)
+                    {
+                        let monthConfig = yearConfig[key2];
+                        if (monthConfig)
+                        {
+                            let obj = {};
+                            for (let i = 0; i< monthConfig.length; i++)
+                            {
+                                obj[monthConfig[i]] = true;
+                            }
+                            yearConfig[key2] = obj;
+                        }
+
+                        
+                    }
+                }
+
+                let weekendObj = {};
+                for (let i = 0; i < holidayConfig.weekend.length; i++)
+                {
+                    weekendObj[holidayConfig.weekend[i]] = true;
+                }
+
+                holidayConfig.weekend = weekendObj;
+            }
+
+            function isHoliday(year, month, date, day)
+            {
+                let holidayConfig = window._holidayConfig;
+                if (holidayConfig.extraHoliday[year] && holidayConfig.extraHoliday[year][month] && holidayConfig.extraHoliday[year][month][date])
+                {
+                    return true;
+                }
+
+                if (holidayConfig.extraWorkingDay[year] && holidayConfig.extraWorkingDay[year][month] && holidayConfig.extraWorkingDay[year][month][date])
+                {
+                    return false;
+                }
+                
+                if (holidayConfig.weekend[day])
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            
+            function checkCommitInfo(dt)
+            {
+                // dt = new Date();
+                let year = dt.getFullYear();
+                let month = dt.getMonth() + 1;
+                let date = dt.getDate();
+                let day = dt.getDay();
+                let hour = dt.getHours();
+                let minute = dt.getMinutes();
+                let hourF = hour + minute / 60;
+
+                let isOverWork = false;
+                let color = "";
+                let gravity = 0;
+
+
+                if (isHoliday(year, month, date,day))
+                {
+                    isOverWork = true;
+                    color = window._holidayConfig.color;
+                }
+
+                let hourConfig = window._hourConfig;
+                let result;
+                // console.log(hour);
+                if (hourConfig.customFunc)
+                {
+                    result = hourConfig.customFunc(hourF);
+                }
+                else
+                {
+                    result = hourConfig[hour];
+                }
+
+                if (result)
+                {
+                    isOverWork = true;
+                    if (result.color)
+                    {
+                        color = result.color;
+                    }
+                }
+
+                let dt2;
+                gravity = hour;
+                if (result && result.overnight)
+                {
+                    gravity += 24;
+                    dt2 = new Date(dt.getTime() - 1000 * 24 * 3600);
+                }
+                else
+                {
+                    dt2 = dt;
+                }
+
+
+                return {
+                    isOverWork : isOverWork,
+                    color : color,
+                    gravity : gravity,
+                    year : dt2.getFullYear(),
+                    month : dt2.getMonth() + 1,
+                    date : dt2.getDate(),
+                }
+                
+            }
+
+
+        </script>
+    </body>
+</html>

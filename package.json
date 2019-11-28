@@ -1,0 +1,17 @@
+{
+  "name": "check_996",
+  "version": "1.0.0",
+  "description": "",
+  "main": "checker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "996"
+  ],
+  "author": "ltccss",
+  "license": "ISC",
+  "devDependencies": {
+    "open": "^7.0.0"
+  }
+}
