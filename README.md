@@ -26,7 +26,7 @@ e.g.
 
 成功后将会在新打开的浏览器窗口中显示这样的一个页面：
 
-![img](https://github.com/ltccss/996checker/blob/master/doc/example.png?raw=true)
+![img](/doc/example.png?raw=true)
 
 
 
