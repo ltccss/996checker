@@ -17,11 +17,11 @@ npm i check_996 -g
 ```
 然后
 ```
-996check "the git repository path you want to check"
+996checker "the git repository path you want to check"
 ```
 e.g. 
 ```
-996check "M:\Project\spring-cloud-alibaba\.git"
+996checker "M:\Project\spring-cloud-alibaba\.git"
 ```
 
 成功后将会在新打开的浏览器窗口中显示这样的一个页面：
