@@ -16,7 +16,7 @@
         <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
         <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
 
-        <script src="./git_data.js"></script>
+        <script src="./log_data.js"></script>
         <script src="./config.js"></script>
     </head>
     <body>
@@ -95,17 +95,17 @@
                 refreshDate();
             }
 
-            if (window._gitData)
+            if (window._logData)
             {
                 console.log("find git commit data");
 
                 let schedules = [];
 
-                let gitData = window._gitData;
+                let logData = window._logData;
 
-                for (let i = 0; i < gitData.length; i++)
+                for (let i = 0; i < logData.length; i++)
                 {
-                    let dt = new Date(gitData[i][0]);
+                    let dt = new Date(logData[i][0]);
 
                     let info = checkCommitInfo(dt);
                     
@@ -128,8 +128,8 @@
                         schedules.push({
                             id: (i+1).toString(),
                             calendarId: '1',
-                            title: gitData[i][1] + " " + timeString,
-                            body:gitData[i][0],
+                            title: logData[i][1] + " " + timeString,
+                            body:logData[i][0],
                             category: 'allday',
                             dueDateClass: '',
                             // schedule类型为allday的时候，只解析start前十个字符？
@@ -142,7 +142,7 @@
                             year : info.year,
                             month : info.month,
                             date : info.date,
-                            author : gitData[i][1],
+                            author : logData[i][1],
                         });
 
                         // console.log(dateString);

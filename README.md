@@ -1,12 +1,15 @@
 # usage
 你可以直接下载此项目，在项目根目录下打开命令行，然后
 ```
-node checker "the git repository path you want to check"
+node checker "the git/svn repository path you want to check"
 ```
 
 e.g. 
 ```
 node checker "M:\Project\spring-cloud-alibaba\.git"
+```
+```
+node checker "M:\Project\easybuy09\.svn"
 ```
 
 或者
@@ -17,16 +20,19 @@ npm i check_996 -g
 ```
 然后
 ```
-996checker "the git repository path you want to check"
+996checker "the git/svn repository path you want to check"
 ```
 e.g. 
 ```
 996checker "M:\Project\spring-cloud-alibaba\.git"
 ```
+```
+996checker "M:\Project\easybuy09\.svn"
+```
 
 成功后将会在新打开的浏览器窗口中显示这样的一个页面：
 
-![img](/doc/example.png?raw=true)
+![img](https://github.com/ltccss/996checker/blob/master/doc/example.png?raw=true)
 
 
 
