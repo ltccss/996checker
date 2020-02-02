@@ -1,6 +1,6 @@
 {
   "name": "check_996",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "",
   "main": "checker.js",
   "scripts": {
@@ -15,7 +15,8 @@
     "open": "^7.0.0"
   },
   "dependencies": {
-    "open": "^7.0.0"
+    "open": "^7.0.0",
+    "open-file-explorer": "^1.0.2"
   },
   "bin": {
     "996checker": "checker.js"
