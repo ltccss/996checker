@@ -97,14 +97,28 @@
 
             if (window._logData)
             {
-                console.log("find git commit data");
+                console.log("find commit log data");
 
                 let schedules = [];
 
+                let excludeAuthors = {};
+
+                if (window._excludeAuthors)
+                {
+                    for (let i = 0; i < window._excludeAuthors.length; i++)
+                    {
+                        excludeAuthors[window._excludeAuthors[i]] = true;
+                    }
+                }
+                
                 let logData = window._logData;
 
                 for (let i = 0; i < logData.length; i++)
                 {
+                    if (excludeAuthors[logData[i][1]])
+                    {
+                        continue;
+                    }
                     let dt = new Date(logData[i][0]);
 
                     let info = checkCommitInfo(dt);

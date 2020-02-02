@@ -127,3 +127,9 @@ var _holidayConfig =
     weekend: [0, 6],
     color : "#00ff0c"
 }
+
+// 需要排除的作者名字
+var _excludeAuthors = 
+[
+    // "admin",
+]
