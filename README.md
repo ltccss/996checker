@@ -1,3 +1,4 @@
+根据git或者svn的提交时间，检视您所属项目的加班情况
 # usage
 你可以直接下载此项目，在项目根目录下打开命令行，然后
 ```
@@ -32,7 +33,7 @@ e.g.
 
 成功后将会在新打开的浏览器窗口中显示这样的一个页面：
 
-![img](https://github.com/ltccss/996checker/blob/master/doc/example.png?raw=true)
+![img](https://s2.ax1x.com/2020/02/23/31Cgp9.png)
 
 
 
